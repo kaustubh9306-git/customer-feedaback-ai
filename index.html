@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101116">
+    <meta name="description" content="Explore customer review sentiment, confidence, and review themes.">
+    <title>Customer Review Sentiment Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script defer src="/app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Dashboard filters">
+        <a class="brand" href="/" aria-label="Customer Insight home">
+          <span class="brand-mark" aria-hidden="true">C</span>
+          <span>Customer<span class="brand-muted">Insight</span></span>
+        </a>
+
+        <div class="sidebar-heading">
+          <h2>Filters</h2>
+          <p>Refine your review data</p>
+        </div>
+
+        <fieldset class="filter-group" id="sentiment-filters">
+          <legend>Sentiment</legend>
+          <label class="check-option positive-option">
+            <input type="checkbox" value="POSITIVE" checked>
+            <span class="check-indicator" aria-hidden="true"></span>
+            <span class="sentiment-dot"></span>
+            Positive
+            <span class="option-count" id="positive-filter-count">0</span>
+          </label>
+          <label class="check-option negative-option">
+            <input type="checkbox" value="NEGATIVE" checked>
+            <span class="check-indicator" aria-hidden="true"></span>
+            <span class="sentiment-dot"></span>
+            Negative
+            <span class="option-count" id="negative-filter-count">0</span>
+          </label>
+        </fieldset>
+
+        <fieldset class="filter-group confidence-filter">
+          <legend>Confidence range</legend>
+          <div class="range-labels">
+            <span id="confidence-min-label">0%</span>
+            <span id="confidence-max-label">100%</span>
+          </div>
+          <div class="range-control">
+            <input id="confidence-min" type="range" min="0" max="1" step="any" value="0" aria-label="Minimum confidence">
+            <input id="confidence-max" type="range" min="0" max="1" step="any" value="1" aria-label="Maximum confidence">
+          </div>
+          <p class="filter-hint">Only show reviews in this range</p>
+        </fieldset>
+
+        <div class="sidebar-spacer"></div>
+        <label class="upload-button" for="csv-upload">
+          <span aria-hidden="true">↑</span>
+          Upload reviews
+          <input id="csv-upload" type="file" accept=".csv,text/csv">
+        </label>
+        <p class="sidebar-note">CSV file must include sentiment, confidence, and review columns.</p>
+        <div class="sidebar-footer">
+          <span class="status-dot"></span>
+          <span id="data-source">Loading sample data…</span>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-separator">/</span><strong>Customer reviews</strong></div>
+          <a class="github-link" href="https://github.com/kaustubh9306-git/customer-feedaback-ai" target="_blank" rel="noreferrer">
+            <span aria-hidden="true">↗</span> Source code
+          </a>
+        </header>
+
+        <div class="dashboard-content">
+          <section class="page-intro">
+            <div>
+              <p class="eyebrow">CUSTOMER EXPERIENCE</p>
+              <h1>Review sentiment</h1>
+              <p class="intro-copy">Understand what customers are saying and how they feel about your product.</p>
+            </div>
+            <label class="upload-button mobile-upload" for="csv-upload-mobile">
+              <span aria-hidden="true">↑</span> Import CSV
+              <input id="csv-upload-mobile" type="file" accept=".csv,text/csv">
+            </label>
+          </section>
+
+          <section class="metrics-grid" aria-label="Review summary">
+            <article class="metric-card">
+              <div class="metric-heading"><span>Total reviews</span><span class="metric-icon neutral-icon" aria-hidden="true">▤</span></div>
+              <div class="metric-value" id="total-reviews">—</div>
+              <p class="metric-caption">In the current dataset</p>
+            </article>
+            <article class="metric-card">
+              <div class="metric-heading"><span>Positive sentiment</span><span class="metric-icon positive-icon" aria-hidden="true">↗</span></div>
+              <div class="metric-value" id="positive-percent">—</div>
+              <p class="metric-caption"><span class="inline-dot positive-dot"></span><span id="positive-total">0</span> positive reviews</p>
+            </article>
+            <article class="metric-card">
+              <div class="metric-heading"><span>Negative sentiment</span><span class="metric-icon negative-icon" aria-hidden="true">↘</span></div>
+              <div class="metric-value" id="negative-percent">—</div>
+              <p class="metric-caption"><span class="inline-dot negative-dot"></span><span id="negative-total">0</span> negative reviews</p>
+            </article>
+            <article class="metric-card">
+              <div class="metric-heading"><span>Avg. confidence</span><span class="metric-icon confidence-icon" aria-hidden="true">◎</span></div>
+              <div class="metric-value" id="average-confidence">—</div>
+              <p class="metric-caption">Model prediction confidence</p>
+            </article>
+          </section>
+
+          <section class="chart-grid" aria-label="Review charts">
+            <article class="panel chart-panel">
+              <div class="panel-heading">
+                <div><h2>Sentiment distribution</h2><p>Breakdown of reviews by sentiment</p></div>
+                <span class="panel-badge" id="filtered-count">0 reviews</span>
+              </div>
+              <div class="sentiment-chart">
+                <div class="donut-wrap">
+                  <svg id="sentiment-chart" viewBox="0 0 160 160" role="img" aria-label="Sentiment distribution chart"></svg>
+                  <div class="donut-center"><strong id="chart-total">0</strong><span>reviews</span></div>
+                </div>
+                <div class="chart-legend">
+                  <div><span class="legend-dot positive-dot"></span><span>Positive</span><strong id="chart-positive">0</strong></div>
+                  <div><span class="legend-dot negative-dot"></span><span>Negative</span><strong id="chart-negative">0</strong></div>
+                </div>
+              </div>
+            </article>
+            <article class="panel chart-panel">
+              <div class="panel-heading">
+                <div><h2>Confidence distribution</h2><p>How certain the model is about each review</p></div>
+              </div>
+              <div class="histogram-wrap">
+                <svg id="confidence-chart" viewBox="0 0 520 190" role="img" aria-label="Confidence distribution histogram"></svg>
+              </div>
+            </article>
+          </section>
+
+          <section class="panel reviews-panel">
+            <div class="panel-heading reviews-heading">
+              <div><h2>Recent reviews</h2><p>Showing up to 10 reviews matching your filters</p></div>
+              <button class="download-button" id="download-reviews" type="button"><span aria-hidden="true">↓</span> Export CSV</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Review</th><th>Product</th><th>Sentiment</th><th>Confidence</th><th>Date</th></tr></thead>
+                <tbody id="review-rows"></tbody>
+              </table>
+              <p class="empty-state" id="empty-reviews" hidden>No reviews match these filters. Try changing your selection.</p>
+            </div>
+          </section>
+
+          <section class="wordcloud-section">
+            <div class="section-heading">
+              <div><p class="eyebrow">WHAT CUSTOMERS TALK ABOUT</p><h2>Common themes</h2></div>
+              <p>Frequent words from filtered reviews</p>
+            </div>
+            <div class="wordcloud-grid">
+              <article class="panel wordcloud-panel">
+                <h3><span class="legend-dot positive-dot"></span> Positive reviews</h3>
+                <div class="word-cloud positive-cloud" id="positive-words"></div>
+              </article>
+              <article class="panel wordcloud-panel">
+                <h3><span class="legend-dot negative-dot"></span> Negative reviews</h3>
+                <div class="word-cloud negative-cloud" id="negative-words"></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="insight-banner" id="business-insight" aria-live="polite">
+            <span class="insight-icon" aria-hidden="true">✦</span>
+            <div><p class="eyebrow">BUSINESS INSIGHT</p><p id="insight-copy">Analyzing your review data…</p></div>
+          </section>
+          <p class="error-message" id="error-message" role="alert" hidden></p>
+          <footer class="page-footer">CustomerInsight <span>·</span> Review analytics</footer>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,41 +1,41 @@
-# customer-review-sentiment-dashboard
-A Streamlit-powered NLP project analyzing customer sentiments from phone reviews and visualizing insights for business decision-making.
-<!-- PROJECT HEADER -->
-<h1 align="center">📊 Customer Review Sentiment Dashboard</h1>
+# Customer Review Sentiment Dashboard
 
-<p align="center">
-  <em>Turning raw customer reviews into business intelligence with NLP and Data Visualization</em>
-</p>
+A lightweight static dashboard for exploring customer-review sentiment, model confidence, and common review themes. It reads the sample CSV in the browser and does not require a Python server or external charting services.
 
----
+## Features
 
-## 🚀 Overview
-This project demonstrates how **Natural Language Processing (NLP)** and **Data Analytics** can help businesses extract insights from customer reviews.
+- Total reviews, positive/negative sentiment, and average confidence
+- Sentiment and confidence filters
+- Sentiment and confidence distribution charts
+- Common positive and negative review themes
+- Review table and filtered CSV export
+- Upload your own CSV with `sentiment`, `confidence`, and `review` columns
+- Responsive layout for desktop and mobile
 
-By analyzing phone reviews from e-commerce platforms, we built a **Streamlit dashboard** that identifies customer sentiment, model confidence, and key discussion themes helping companies make smarter product and marketing decisions.
+## Run locally
 
+Open `index.html` through a local static web server so the sample CSV can be loaded:
 
-
-##  Tech Stack
-| Category | Tools |
-| Programming | Python |
-| AI / NLP | Hugging Face Transformers |
-| Visualization | Streamlit, Seaborn, Matplotlib |
-| Data Handling | Pandas |
-| Extras | WordCloud, GitHub Pages |
-
-
-##  Key Features
-- ✅ Sentiment Analysis (Positive / Negative)
-- ✅ Interactive Streamlit Dashboard
-- ✅ Confidence and Sentiment Distribution Charts
-- ✅ Word Clouds for Positive and Negative Reviews
-- ✅ Filtered Review Export
-
-
-##  Installation
 ```bash
-git clone https://github.com/YOURUSERNAME/customer-review-sentiment-dashboard.git
-cd customer-review-sentiment-dashboard
-pip install -r requirements.txt
-streamlit run review_dashboard.py
+npx serve .
+```
+
+Or, with Python installed:
+
+```bash
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000`.
+
+## Deploy to Vercel
+
+Import this GitHub repository into Vercel. The root `index.html`, `styles.css`, `app.js`, and `analyzed_reviews.csv` are served as static assets; no build command or server function is required. The former Streamlit implementation remains in `review_dashboard.py` for users who want to run it separately.
+
+## Validate
+
+```bash
+npm test
+```
+
+The test suite uses Node.js built-ins and requires no npm dependencies.
